@@ -1,0 +1,4 @@
+Model Algorithm,MAE (°C),MSE,RMSE (°C),R² Score
+Linear Regression,0.5067,0.41,0.6403,0.5468
+Decision Tree,0.6047,0.595,0.7714,0.3422
+Random Forest,0.4258,0.2939,0.5421,0.6751

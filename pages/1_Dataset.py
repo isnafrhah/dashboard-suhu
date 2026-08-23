@@ -45,56 +45,47 @@ render_header(
 
 @st.cache_data
 def load_data():
-    all_dfs = []
+    # Nama file hasil cleaning dari notebook (sinkron dengan halaman Visualisasi Data)
+    file_path = "data_bmkg_fix.csv"
+        
+    combined_df = None
+    try:
+        if os.path.exists(file_path):
+            if file_path.endswith('.csv'):
+                combined_df = pd.read_csv(file_path)
+            else:
+                combined_df = pd.read_excel(file_path)
+        else:
+            # Cari otomatis jika file spesifik di atas tidak ada
+            excel_files = glob.glob("*.xlsx") + glob.glob("**/*.xlsx", recursive=True)
+            csv_files = [f for f in glob.glob("*.csv") + glob.glob("**/*.csv", recursive=True) if "filtered" not in f and "full" not in f]
+            
+            if excel_files:
+                combined_df = pd.read_excel(excel_files[0])
+            elif csv_files:
+                combined_df = pd.read_csv(csv_files[0])
+    except Exception:
+        combined_df = None
 
-    # 1. Cari seluruh file Excel (.xlsx) di folder proyek
-    excel_files = glob.glob("*.xlsx") + glob.glob("**/*.xlsx", recursive=True)
-    for f in excel_files:
-        try:
-            temp_df = pd.read_excel(f)
-            all_dfs.append(temp_df)
-        except Exception:
-            pass
-
-    # 2. Cari seluruh file CSV (.csv) utama jika file Excel tidak ditemukan/kurang
-    csv_files = glob.glob("*.csv") + glob.glob("**/*.csv", recursive=True)
-    for f in csv_files:
-        if "filtered" not in f and "full" not in f:  # Abaikan file hasil unduhan
-            try:
-                temp_df = pd.read_csv(f)
-                all_dfs.append(temp_df)
-            except Exception:
-                pass
-
-    # Gabungkan jika ada data yang berhasil dibaca
-    if all_dfs:
-        combined_df = pd.concat(all_dfs, ignore_index=True).drop_duplicates()
+    # Jika file berhasil dimuat, bersihkan duplikat & format tanggal
+    if combined_df is not None and not combined_df.empty:
+        combined_df = combined_df.drop_duplicates()
 
         # Deteksi kolom Tanggal secara otomatis
         date_col = next(
-            (
-                c
-                for c in combined_df.columns
-                if "tanggal" in c.lower() or "date" in c.lower()
-            ),
+            (c for c in combined_df.columns if "tanggal" in c.lower() or "date" in c.lower()),
             None,
         )
         if date_col:
             combined_df.rename(columns={date_col: "TANGGAL"}, inplace=True)
-            combined_df["TANGGAL"] = pd.to_datetime(
-                combined_df["TANGGAL"], errors="coerce"
-            )
+            combined_df["TANGGAL"] = pd.to_datetime(combined_df["TANGGAL"], errors="coerce")
             combined_df = combined_df.dropna(subset=["TANGGAL"])
-            combined_df = combined_df.sort_values(
-                by="TANGGAL", ascending=True
-            )
-
-            # RESET INDEKS AGAR PENOMORAN BARIS PERTAMA DIMULAI DARI 0
+            combined_df = combined_df.sort_values(by="TANGGAL", ascending=True)
             combined_df = combined_df.reset_index(drop=True)
 
-            return combined_df
+        return combined_df
 
-    # Fallback Data Dummy jika tidak ada file yang terbaca sama sekali
+    # Fallback Data Dummy jika file tidak ditemukan sama sekali
     dates = pd.date_range(start="2024-07-14", end="2026-07-22", freq="D")
     return pd.DataFrame(
         {
@@ -108,18 +99,23 @@ def load_data():
     )
 
 
+# Memuat data ke variabel df
 df = load_data()
 
-# Format Tanggal Tampilan
-if pd.api.types.is_datetime64_any_dtype(df["TANGGAL"]):
-    min_date = df["TANGGAL"].min().strftime("%d %B %Y")
-    max_date = df["TANGGAL"].max().strftime("%d %B %Y")
-    df_display = df.copy()
-    df_display["TANGGAL"] = df_display["TANGGAL"].dt.strftime("%Y-%m-%d")
+# Validasi keamanan agar df tidak kosong
+if df is not None and not df.empty:
+    if "TANGGAL" in df.columns and pd.api.types.is_datetime64_any_dtype(df["TANGGAL"]):
+        min_date = df["TANGGAL"].min().strftime("%d %B %Y")
+        max_date = df["TANGGAL"].max().strftime("%d %B %Y")
+        df_display = df.copy()
+        df_display["TANGGAL"] = df_display["TANGGAL"].dt.strftime("%Y-%m-%d")
+    else:
+        min_date = str(df["TANGGAL"].min()) if "TANGGAL" in df.columns else "-"
+        max_date = str(df["TANGGAL"].max()) if "TANGGAL" in df.columns else "-"
+        df_display = df.copy()
 else:
-    min_date = str(df["TANGGAL"].min())
-    max_date = str(df["TANGGAL"].max())
-    df_display = df.copy()
+    st.error("⚠️ Dataset gagal dimuat atau kosong.")
+    st.stop()
 
 # ------------------------------------------------------
 # 1. INFORMASI DATASET
@@ -172,7 +168,6 @@ if search_keyword:
             axis=1,
         )
     ]
-    # Reset index lagi setelah di-filter agar tetap konsisten dari 0
     filtered_df = filtered_df.reset_index(drop=True)
 else:
     filtered_df = df_display

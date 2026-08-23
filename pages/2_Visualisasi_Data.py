@@ -18,47 +18,25 @@ render_header(
 
 @st.cache_data
 def load_data():
-    all_dfs = []
+    # Langsung membaca file CSV hasil cleaning notebook
+    try:
+        df = pd.read_csv("data_bmkg_fix.csv")
+        df["TANGGAL"] = pd.to_datetime(df["TANGGAL"], errors="coerce")
+        df = df.dropna(subset=["TANGGAL"]).sort_values(by="TANGGAL")
+        return df
+    except Exception as e:
+        st.error(f"Gagal membaca file data_bmkg_fix.csv: {e}")
+        # Fallback Data jika file belum ketemu
+        dates = pd.date_range(start="2024-07-14", end="2026-07-22", freq="D")
+        return pd.DataFrame({
+            "TANGGAL": dates,
+            "RH_AVG": [80.0] * len(dates),
+            "RR": [0.0] * len(dates),
+            "SS": [6.0] * len(dates),
+            "FF_AVG": [2.5] * len(dates),
+            "TAVG": [26.0] * len(dates)
+        })
     
-    # Read Excel (.xlsx)
-    excel_files = glob.glob("*.xlsx") + glob.glob("**/*.xlsx", recursive=True)
-    for f in excel_files:
-        try:
-            temp_df = pd.read_excel(f)
-            all_dfs.append(temp_df)
-        except Exception:
-            pass
-
-    # Read CSV (.csv)
-    csv_files = glob.glob("*.csv") + glob.glob("**/*.csv", recursive=True)
-    for f in csv_files:
-        if "filtered" not in f and "full" not in f and "hasil_prediksi" not in f:
-            try:
-                temp_df = pd.read_csv(f)
-                all_dfs.append(temp_df)
-            except Exception:
-                pass
-
-    if all_dfs:
-        combined_df = pd.concat(all_dfs, ignore_index=True).drop_duplicates()
-        date_col = next((c for c in combined_df.columns if "tanggal" in c.lower() or "date" in c.lower()), None)
-        if date_col:
-            combined_df.rename(columns={date_col: "TANGGAL"}, inplace=True)
-            combined_df["TANGGAL"] = pd.to_datetime(combined_df["TANGGAL"], errors="coerce")
-            combined_df = combined_df.dropna(subset=["TANGGAL"]).sort_values(by="TANGGAL")
-            return combined_df
-
-    # Fallback Data Dummy jika file belum terbaca
-    dates = pd.date_range(start="2024-07-14", end="2026-07-22", freq="D")
-    return pd.DataFrame({
-        "TANGGAL": dates,
-        "RH_AVG": [80.0 + (i % 5) for i in range(len(dates))],
-        "RR": [0.0 + (i % 10) * 2 for i in range(len(dates))],
-        "SS": [6.0 + (i % 4) * 0.5 for i in range(len(dates))],
-        "FF_AVG": [2.5 + (i % 3) * 0.2 for i in range(len(dates))],
-        "TAVG": [26.0 + (i % 5) * 0.4 for i in range(len(dates))]
-    })
-
 df = load_data()
 
 # ------------------------------------------------------
@@ -83,10 +61,29 @@ st.markdown("<br>", unsafe_allow_html=True)
 # ------------------------------------------------------
 # 2. TREN TEMPORAL PARAMETER IKLIM
 # ------------------------------------------------------
-st.markdown('<div class="section-header">2. Grafik Tren Parameter Iklim</div>', unsafe_allow_html=True)
+st.markdown(
+    '<div class="section-header">2. Grafik Tren Parameter Iklim</div>',
+    unsafe_allow_html=True,
+)
 
-# Pilihan variabel untuk diplot
-numeric_cols = [c for c in filtered_df.columns if c != "TANGGAL" and pd.api.types.is_numeric_dtype(filtered_df[c])]
+# Abaikan kolom-kolom tanggal/waktu hasil feature engineering
+ignored_cols = [
+    "TANGGAL",
+    "YEAR",
+    "MONTH",
+    "DAY",
+    "DAY_OF_WEEK",
+    "DAYOFWEEK",
+    "QUARTER",
+    "WEEKOFYEAR",
+]
+
+# Pilihan variabel untuk diplot (hanya parameter iklim asli)
+numeric_cols = [
+    c
+    for c in filtered_df.columns
+    if c not in ignored_cols and pd.api.types.is_numeric_dtype(filtered_df[c])
+]
 
 selected_vars = st.multiselect(
     "Pilih Parameter Yang Ingin Ditampilkan Pada Grafik Tren:",

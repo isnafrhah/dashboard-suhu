@@ -23,7 +23,7 @@ st.write(
     """
 Dashboard ini dirancang untuk melakukan **monitoring, analisis visual, dan pemodelan prediksi temperatur harian ($T_{AVG}$)** berdasarkan data histori parameter iklim dari Badan Meteorologi, Klimatologi, dan Geofisika (BMKG). 
 
-Dengan memanfaatkan algoritma **Machine Learning (Random Forest Regression)**, sistem ini mampu mengestimasi temperatur udara berdasarkan variasi kondisi kelembapan, curah hujan, penyinaran matahari, dan kecepatan angin.
+Dengan memanfaatkan algoritma **Machine Learning (Random Forest Regression)**, sistem ini memprediksi suhu udara **H+1 (satu hari ke depan)** berdasarkan kondisi kelembapan, curah hujan, tekanan udara, penyinaran matahari, kecepatan angin, dan suhu rata-rata pada hari sebelumnya (H-1). Dengan skema ini, model benar-benar melakukan *forecasting* menggunakan informasi yang tersedia sebelum hari yang diprediksi terjadi, bukan sekadar estimasi berdasarkan kondisi hari yang sama.
 """
 )
 
@@ -45,14 +45,19 @@ with col_p1:
     * **`TAVG` (Temperatur Rata-Rata)**: Suhu udara rata-rata harian yang diukur dalam satuan derajat Celsius (°C). Parameter ini menjadi variabel target (*label*) prediksi.
     * **`RH_AVG` (Kelembapan Rata-Rata)**: Persentase kelembapan udara relatif rata-rata harian (%).
     * **`RR` (Curah Hujan)**: Jumlah akumulasi curah hujan harian yang diukur dalam satuan milimeter (mm).
+    * **`SS` (Penyinaran Matahari)**: Durasi lamanya sinar matahari memancar terang hingga permukaan bumi dalam sehari (Jam).
     """
     )
 
 with col_p2:
     st.markdown(
         """
-    * **`SS` (Penyinaran Matahari)**: Durasi lamanya sinar matahari memancar terang hingga permukaan bumi dalam sehari (Jam).
     * **`FF_AVG` (Kecepatan Angin)**: Kecepatan angin rata-rata harian yang diukur pada ketinggian standar (m/s).
+    * **`MONTH` & `DAY`**: Komponen bulan dan tanggal pada hari yang diprediksi, digunakan model untuk menangkap pola musiman.
+    * **`TAVG_LAG_1`**: Suhu rata-rata satu hari sebelumnya (H-1), fitur dengan korelasi tertinggi terhadap TAVG (≈0.78).
+    * **`PRESSURE` (Tekanan Udara)**: Tekanan udara rata-rata permukaan (hPa/mb), diambil dari data H-1.
+
+    Sejak pembaruan terbaru, model diarahkan untuk melakukan **forecast H+1**: seluruh parameter kelembapan, curah hujan, tekanan udara, penyinaran matahari, dan kecepatan angin di atas menggunakan nilai pada hari sebelumnya (H-1) untuk memprediksi TAVG pada hari berikutnya (H+1). Skema ini meningkatkan R² Score model Random Forest menjadi **0,7202** (dari skema estimasi hari yang sama sebesar 0,6751).
     """
     )
 
@@ -73,7 +78,7 @@ with c1:
     )
 with c2:
     draw_metric_card(
-        "Preprocessing", "MinMax / StandardScaler", "Normalisasi Fitur Input"
+        "Preprocessing", "Cleaning & Interpolasi Waktu", "Tanpa Scaling (Tree-Based)"
     )
 with c3:
     draw_metric_card("Evaluasi Utama", "R² Score & RMSE", "Akurasi Prediksi")
@@ -81,5 +86,6 @@ with c3:
 st.markdown("<br>", unsafe_allow_html=True)
 
 st.info(
-    "💡 **Catatan**: Model Random Forest dipilih karena ketahanannya terhadap data non-linear serta kemampuannya menangani kompleksitas korelasi antar-parameter iklim secara efisien."
+    "💡 **Catatan**: Model Random Forest dipilih karena ketahanannya terhadap data non-linear serta kemampuannya menangani kompleksitas korelasi antar-parameter iklim secara efisien. "
+    "Sebagai model berbasis pohon keputusan (*tree-based*), Random Forest membagi data berdasarkan nilai ambang batas fitur, sehingga tidak memerlukan normalisasi/scaling seperti pada model berbasis jarak (misalnya KNN atau regresi linear dengan regularisasi)."
 )

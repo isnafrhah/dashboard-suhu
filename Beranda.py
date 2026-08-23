@@ -48,8 +48,8 @@ c1, c2, c3, c4 = st.columns(4)
 with c1:
     draw_metric_card("Target Prediksi", "TAVG (°C)", "Suhu Udara Rata-Rata")
 with c2:
-    draw_metric_card("Fitur Input", "4 Indikator", "RH, RR, SS, FF")
+    draw_metric_card("Fitur Input", "8 Indikator (H-1)", "RH, RR, Tekanan, SS, FF, Suhu (H-1), Bulan, Hari (H)")
 with c3:
-    draw_metric_card("Model Aktif", "Random Forest", "Akurasi Optimum")
+    draw_metric_card("Model Aktif", "Random Forest", "Model Terbaik dari 3 Kandidat")
 with c4:
-    draw_metric_card("Status Sistem", "Aktif / Ready 🟢", "Streamlit Dashboard")
+    draw_metric_card("Status Sistem", "Aktif / Ready", "Streamlit Dashboard")
