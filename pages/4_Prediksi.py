@@ -325,13 +325,13 @@ mode = st.radio(
     "Mode Prediksi:",
     [
         "Prediksi Otomatis (Live)",
-        "Coba Sendiri (Opsional)"
+        "Prediksi Manual (Opsional)"
     ],
     horizontal=True
 )
 st.caption(
     "Mode **Otomatis** mengambil kondisi cuaca hari ini secara langsung dari data cuaca publik "
-    "untuk lokasi YIA — tidak perlu isi apapun. Mode **Coba Sendiri** untuk yang ingin bereksperimen "
+    "untuk lokasi YIA — tidak perlu isi apapun. Mode **Prediksi Manual** untuk yang ingin bereksperimen "
     "dengan angka sendiri (misalnya petugas BMKG yang ingin mengecek skenario tertentu)."
 )
 st.markdown("<br>", unsafe_allow_html=True)
@@ -447,7 +447,8 @@ else:
 
         st.caption(
             "Semua nilai di atas dianggap sebagai kondisi cuaca pada 'Tanggal Data' yang dipilih. "
-            "Model akan memprediksi suhu pada tanggal setelahnya (H+1)."
+            "Model akan memprediksi suhu pada tanggal setelahnya (H+1). "
+            "Angka default di atas hanyalah contoh — silahkan ubah sesuai kondisi yang ingin disimulasikan."
         )
 
     if submitted:
