@@ -113,14 +113,33 @@ st.markdown("<br>", unsafe_allow_html=True)
 # ------------------------------------------------------
 # 3. MATRIKS KORELASI & DISTRIBUSI
 # ------------------------------------------------------
-st.markdown('<div class="section-header">3. Analisis Korelasi & Distribusi Data</div>', unsafe_allow_html=True)
+st.markdown(
+    '<div class="section-header">3. Analisis Korelasi & Distribusi Data</div>',
+    unsafe_allow_html=True
+)
 
 col_chart1, col_chart2 = st.columns(2)
 
 with col_chart1:
     st.subheader("Matriks Korelasi (Heatmap)")
-    if len(numeric_cols) > 1:
-        corr_matrix = filtered_df[numeric_cols].corr().round(2)
+
+    corr_cols = [
+        "TAVG",
+        "RH_AVG",
+        "RR",
+        "SS",
+        "FF_AVG",
+        "PRESSURE"
+    ]
+
+    # Hanya gunakan kolom yang memang tersedia
+    available_corr_cols = [
+        col for col in corr_cols if col in filtered_df.columns
+    ]
+
+    if len(available_corr_cols) > 1:
+        corr_matrix = filtered_df[available_corr_cols].corr().round(2)
+
         fig_corr = px.imshow(
             corr_matrix,
             text_auto=True,
@@ -128,13 +147,19 @@ with col_chart1:
             color_continuous_scale="Blues",
             title="Korelasi Antar Parameter Iklim"
         )
+
         st.plotly_chart(fig_corr, use_container_width=True)
     else:
         st.info("Parameter numerik tidak cukup untuk menghitung korelasi.")
 
 with col_chart2:
     st.subheader("Distribusi Parameter")
-    dist_var = st.selectbox("Pilih Parameter Untuk Histogram:", numeric_cols)
+
+    dist_var = st.selectbox(
+        "Pilih Parameter Untuk Histogram:",
+        numeric_cols
+    )
+
     if dist_var:
         fig_hist = px.histogram(
             filtered_df,
@@ -144,4 +169,5 @@ with col_chart2:
             color_discrete_sequence=["#2563EB"],
             title=f"Distribusi Frekuensi {dist_var}"
         )
+
         st.plotly_chart(fig_hist, use_container_width=True)
