@@ -170,4 +170,15 @@ with col_chart2:
             title=f"Distribusi Frekuensi {dist_var}"
         )
 
-        st.plotly_chart(fig_hist, use_container_width=True)
+        fig_hist.update_layout(
+            template="plotly_white",
+            xaxis_title=dist_var,
+            yaxis_title="Frekuensi"
+        )
+
+        st.plotly_chart(
+            fig_hist,
+            use_container_width=True
+        )
+    else:
+        st.info("Tidak ada parameter numerik yang tersedia.")

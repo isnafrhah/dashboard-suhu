@@ -4,7 +4,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import plotly.express as px
-import plotly.graph_objects as go  # <-- Tambahkan baris ini!
+import plotly.graph_objects as go  
 import streamlit as st
 
 from style import apply_custom_css, draw_metric_card, render_header
@@ -15,8 +15,7 @@ from style import apply_custom_css, draw_metric_card, render_header
 # ======================================================
 
 st.set_page_config(
-    page_title="Perbandingan Model - BMKG",
-    page_icon="📊",
+    page_title="Perbandingan Model - Pemantauan Cuaca Temon",
     layout="wide"
 )
 
@@ -31,7 +30,7 @@ render_header(
     title="Performa Model Machine Learning",
     subtitle=(
         "Evaluasi dan komparasi hasil prediksi temperatur harian "
-        "berdasarkan data aktual BMKG YIA."
+        "berdasarkan data aktual Stasiun Meteorologi Kelas II Yogyakarta"
     ),
 )
 
@@ -409,41 +408,153 @@ st.markdown(
 )
 
 HASIL_PREDIKSI_PATH = PROJECT_DIR / "hasil_prediksi_forecast.csv"
+
+
 @st.cache_data
 def load_hasil_prediksi():
+
+    if not HASIL_PREDIKSI_PATH.exists():
+        return None
+
     df = pd.read_csv(HASIL_PREDIKSI_PATH)
-    df["TANGGAL"] = pd.to_datetime(df["TANGGAL"], errors="coerce")
-    return df.dropna(subset=["TANGGAL"]).sort_values(by="TANGGAL")
 
-df_pred = load_hasil_prediksi()
+    df.columns = df.columns.str.strip()
 
-model_cols = ["Linear Regression", "Decision Tree", "Random Forest"]
-pilihan_model = st.selectbox("Pilih Model:", model_cols, index=2)
+    required_columns = [
+        "TANGGAL",
+        "Aktual (TAVG)",
+        "Linear Regression",
+        "Decision Tree",
+        "Random Forest"
+    ]
 
-fig_compare = go.Figure()
+    missing_columns = [
+        col for col in required_columns
+        if col not in df.columns
+    ]
 
-# Ganti color ke #FFFFFF (Putih) atau #F1F5F9 (Abu-abu terang) agar kontras di latar gelap
-fig_compare.add_trace(go.Scatter(
-    x=df_pred["TANGGAL"], 
-    y=df_pred["Aktual (TAVG)"],
-    mode="lines", 
-    name="Aktual", 
-    line=dict(color="#FFFFFF", width=2) # <-- Warna diganti jadi putih terang
-))
+    if missing_columns:
+        raise ValueError(
+            f"Kolom berikut tidak ditemukan: {missing_columns}"
+        )
 
-fig_compare.add_trace(go.Scatter(
-    x=df_pred["TANGGAL"], 
-    y=df_pred[pilihan_model],
-    mode="lines", 
-    name=f"Prediksi ({pilihan_model})",
-    line=dict(color="#3B82F6", dash="dash", width=2) # <-- Biru cerah putus-putus
-))
+    df["TANGGAL"] = pd.to_datetime(
+        df["TANGGAL"],
+        errors="coerce"
+    )
 
-fig_compare.update_layout(
-    title=f"Aktual vs Prediksi - {pilihan_model}",
-    xaxis_title="Tanggal", 
-    yaxis_title="Temperatur (°C)",
-    template="plotly_dark" # <-- Sesuaikan template ke dark agar serasi dengan tema aplikasi
-)
+    numeric_columns = [
+        "Aktual (TAVG)",
+        "Linear Regression",
+        "Decision Tree",
+        "Random Forest"
+    ]
 
-st.plotly_chart(fig_compare, use_container_width=True)
+    for col in numeric_columns:
+        df[col] = pd.to_numeric(
+            df[col],
+            errors="coerce"
+        )
+
+    return (
+        df
+        .dropna(subset=["TANGGAL"])
+        .sort_values("TANGGAL")
+        .reset_index(drop=True)
+    )
+
+
+try:
+
+    df_pred = load_hasil_prediksi()
+
+    if df_pred is None or df_pred.empty:
+
+        st.warning(
+            "Data hasil prediksi belum tersedia. "
+            "Pastikan file hasil_prediksi_forecast.csv berada "
+            "di folder utama project."
+        )
+
+    else:
+
+        model_cols = [
+            "Linear Regression",
+            "Decision Tree",
+            "Random Forest"
+        ]
+
+        pilihan_model = st.selectbox(
+            "Pilih Model:",
+            model_cols,
+            index=2
+        )
+
+        # Mengambil tanggal dan nilai aktual serta prediksi
+        pred_plot = df_pred[
+            ["TANGGAL", "Aktual (TAVG)", pilihan_model]
+        ].copy()
+
+        # Menghapus data yang kosong
+        pred_plot = pred_plot.dropna(
+            subset=["TANGGAL", "Aktual (TAVG)", pilihan_model]
+        )
+
+        # Mengurutkan berdasarkan tanggal
+        pred_plot = pred_plot.sort_values("TANGGAL")
+
+        if pred_plot.empty:
+
+            st.info(
+                "Tidak ada data aktual dan prediksi yang lengkap "
+                "untuk ditampilkan pada model ini."
+            )
+
+        else:
+
+            fig_compare = go.Figure()
+
+            # Garis data aktual
+            fig_compare.add_trace(go.Scatter(
+                x=pred_plot["TANGGAL"],
+                y=pred_plot["Aktual (TAVG)"],
+                mode="lines",
+                name="Aktual",
+                line=dict(
+                    color="#FFFFFF",
+                    width=2
+                )
+            ))
+
+            # Garis hasil prediksi
+            fig_compare.add_trace(go.Scatter(
+                x=pred_plot["TANGGAL"],
+                y=pred_plot[pilihan_model],
+                mode="lines",
+                name=f"Prediksi ({pilihan_model})",
+                line=dict(
+                    color="#3B82F6",
+                    dash="dash",
+                    width=2
+                )
+            ))
+
+            fig_compare.update_layout(
+                title=f"Aktual vs Prediksi - {pilihan_model}",
+                xaxis_title="Tanggal",
+                yaxis_title="Temperatur (°C)",
+                template="plotly_dark",
+                height=420,
+                hovermode="x unified"
+            )
+
+            st.plotly_chart(
+                fig_compare,
+                use_container_width=True
+            )
+
+except Exception as e:
+
+    st.error(
+        f"Grafik aktual vs prediksi tidak dapat ditampilkan: {e}"
+    )

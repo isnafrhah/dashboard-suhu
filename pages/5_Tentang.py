@@ -2,12 +2,12 @@ import streamlit as st
 from style import apply_custom_css, draw_metric_card, render_header
 
 # Config Halaman
-st.set_page_config(page_title="Tentang - BMKG", page_icon="ℹ️", layout="wide")
+st.set_page_config(page_title="Tentang – Sistem Pemantauan Cuaca", layout="wide")
 apply_custom_css()
 
 # Header Halaman
 render_header(
-    title="Tentang Sistem Prediksi Temperatur BMKG",
+    title="Tentang Sistem Pemantauan Cuaca & Prediksi Suhu",
     subtitle="Dokumentasi, metodologi Machine Learning, dan informasi variabel parameter iklim.",
 )
 
@@ -21,7 +21,7 @@ st.markdown(
 
 st.write(
     """
-Dashboard ini dirancang untuk melakukan **monitoring, analisis visual, dan pemodelan prediksi temperatur harian ($T_{AVG}$)** berdasarkan data histori parameter iklim dari Badan Meteorologi, Klimatologi, dan Geofisika (BMKG). 
+Dashboard ini dirancang untuk melakukan **monitoring, analisis visual, dan pemodelan prediksi temperatur harian ($T_{AVG}$)** berdasarkan data historis parameter iklim kawasan Temon, Kulon Progo, Daerah Istimewa Yogyakarta.
 
 Dengan memanfaatkan algoritma **Machine Learning (Random Forest Regression)**, sistem ini memprediksi suhu udara **H+1 (satu hari ke depan)** berdasarkan kondisi kelembapan, curah hujan, tekanan udara, penyinaran matahari, kecepatan angin, dan suhu rata-rata pada hari sebelumnya (H-1). Dengan skema ini, model benar-benar melakukan *forecasting* menggunakan informasi yang tersedia sebelum hari yang diprediksi terjadi, bukan sekadar estimasi berdasarkan kondisi hari yang sama.
 """

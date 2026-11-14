@@ -12,7 +12,6 @@ from style import apply_custom_css, render_header
 # ============================================================
 st.set_page_config(
     page_title="Analisis Klimatologi",
-    page_icon="⛅",
     layout="wide"
 )
 apply_custom_css()
@@ -126,8 +125,8 @@ def load_last_row(path):
 
 
 # Koordinat Stasiun/Bandara YIA (Temon, Kulon Progo)
-YIA_LAT = -7.9053
-YIA_LON = 110.0573
+YIA_LAT = -7.90746
+YIA_LON = 110.05448
 
 KALIBRASI_PATH = "kalibrasi_openmeteo.json"
 
@@ -368,19 +367,19 @@ if mode == "Prediksi Otomatis (Live)":
 
     if sumber_data == "live":
         st.info(
-            f"📅 Kondisi cuaca hari ini (**{tanggal_x.strftime('%d %B %Y')}**) diambil otomatis "
-            f"dari data cuaca terkini untuk lokasi YIA. Prediksi di bawah untuk hari setelahnya."
+            f"Kondisi cuaca hari ini (**{tanggal_x.strftime('%d %B %Y')}**) diambil otomatis "
+            f"dari data cuaca terkini untuk lokasi Kulon Progo. Prediksi di bawah untuk hari setelahnya."
         )
         if data_hari_ini.get("_terkalibrasi"):
             st.caption(
                 "ℹ️ Data cuaca sumber pihak ketiga (Open-Meteo), sudah dikoreksi memakai bias "
-                "historis terhadap data instrumen BMKG YIA — namun tetap bukan pengukuran "
+                "historis terhadap data instrumen Stasiun Meteorologi Kelas II Yogyakarta — namun tetap bukan pengukuran "
                 "langsung, sehingga hasil prediksi berpotensi sedikit berbeda dari kondisi aktual."
             )
         else:
             st.caption(
                 "ℹ️ Data cuaca berasal dari sumber pihak ketiga (Open-Meteo), bukan alat ukur "
-                "langsung BMKG YIA, sehingga hasil prediksi berpotensi sedikit berbeda dari kondisi "
+                "langsung Stasiun Meteorologi Kelas II Yogyakarta, sehingga hasil prediksi berpotensi sedikit berbeda dari kondisi "
                 "aktual dibanding jika memakai data instrumen BMKG langsung."
             )
     else:
@@ -464,7 +463,7 @@ else:
 
         st.markdown("---")
         st.caption(
-            "Model Random Forest (forecast H+1) dilatih menggunakan data historis BMKG stasiun YIA "
+            "Model Random Forest (forecast H+1) dilatih menggunakan data historis Stasiun Meteorologi Kelas II Yogyakarta "
             "(14 Jul 2024 - 12 Jul 2026). Fitur yang dipakai: kelembapan, curah hujan, tekanan udara, "
             "penyinaran matahari, kecepatan angin, dan suhu pada hari X, untuk memprediksi suhu hari X+1."
         )

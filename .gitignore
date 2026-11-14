@@ -1,3 +1,4 @@
 __pycache__/
 *.pyc
-kalibrasi_openmeteo.json
+.vscode/
+.idea/

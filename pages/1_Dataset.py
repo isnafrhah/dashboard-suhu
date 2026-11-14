@@ -5,7 +5,7 @@ import streamlit as st
 from style import apply_custom_css, draw_metric_card, render_header
 
 # Config Halaman
-st.set_page_config(page_title="Dataset - BMKG", page_icon="📊", layout="wide")
+st.set_page_config(page_title="Dataset - Pemantauan Cuaca Temon", layout="wide")
 apply_custom_css()
 
 # ======================================================
@@ -43,47 +43,29 @@ render_header(
 )
 
 
+from pathlib import Path
+
+PROJECT_DIR = Path(__file__).resolve().parent.parent
+DATA_PATH = PROJECT_DIR / "data_bmkg_fix.csv"
+
+
 @st.cache_data
 def load_data():
-    # Nama file hasil cleaning dari notebook (sinkron dengan halaman Visualisasi Data)
-    file_path = "data_bmkg_fix.csv"
-        
-    combined_df = None
-    try:
-        if os.path.exists(file_path):
-            if file_path.endswith('.csv'):
-                combined_df = pd.read_csv(file_path)
-            else:
-                combined_df = pd.read_excel(file_path)
-        else:
-            # Cari otomatis jika file spesifik di atas tidak ada
-            excel_files = glob.glob("*.xlsx") + glob.glob("**/*.xlsx", recursive=True)
-            csv_files = [f for f in glob.glob("*.csv") + glob.glob("**/*.csv", recursive=True) if "filtered" not in f and "full" not in f]
-            
-            if excel_files:
-                combined_df = pd.read_excel(excel_files[0])
-            elif csv_files:
-                combined_df = pd.read_csv(csv_files[0])
-    except Exception:
-        combined_df = None
+    if not DATA_PATH.exists():
+        return None
 
-    # Jika file berhasil dimuat, bersihkan duplikat & format tanggal
-    if combined_df is not None and not combined_df.empty:
-        combined_df = combined_df.drop_duplicates()
+    df = pd.read_csv(DATA_PATH)
+    df.columns = df.columns.str.strip()
 
-        # Deteksi kolom Tanggal secara otomatis
-        date_col = next(
-            (c for c in combined_df.columns if "tanggal" in c.lower() or "date" in c.lower()),
-            None,
-        )
-        if date_col:
-            combined_df.rename(columns={date_col: "TANGGAL"}, inplace=True)
-            combined_df["TANGGAL"] = pd.to_datetime(combined_df["TANGGAL"], errors="coerce")
-            combined_df = combined_df.dropna(subset=["TANGGAL"])
-            combined_df = combined_df.sort_values(by="TANGGAL", ascending=True)
-            combined_df = combined_df.reset_index(drop=True)
+    if "TANGGAL" not in df.columns:
+        raise ValueError("Kolom TANGGAL tidak ditemukan.")
 
-        return combined_df
+    df = df.drop_duplicates()
+    df["TANGGAL"] = pd.to_datetime(df["TANGGAL"], errors="coerce")
+    df = df.dropna(subset=["TANGGAL"])
+    df = df.sort_values("TANGGAL").reset_index(drop=True)
+
+    return df
 
     # Fallback Data Dummy jika file tidak ditemukan sama sekali
     dates = pd.date_range(start="2024-07-14", end="2026-07-22", freq="D")
