@@ -15,11 +15,45 @@ from style import apply_custom_css, draw_metric_card, render_header
 # ======================================================
 
 st.set_page_config(
-    page_title="Perbandingan Model - Pemantauan Cuaca Temon",
+    page_title="Perbandingan Model – CuacaTani Cabai",
     layout="wide"
 )
 
 apply_custom_css()
+
+# CSS tambahan untuk halaman Perbandingan Model
+st.markdown("""
+<style>
+/* ---- Metric cards mobile stack ---- */
+@media (max-width: 768px) {
+    div[data-testid="stHorizontalBlock"] > div[data-testid="column"] {
+        min-width: 45% !important;
+        flex: 1 1 45% !important;
+    }
+}
+@media (max-width: 480px) {
+    div[data-testid="stHorizontalBlock"] > div[data-testid="column"] {
+        min-width: 100% !important;
+        flex: 1 1 100% !important;
+    }
+}
+/* ---- Selectbox label warna ---- */
+div[data-testid="stSelectbox"] label {
+    color: #174C3A !important;
+    font-weight: 600 !important;
+}
+/* ---- Section header style ---- */
+.section-header {
+    background: linear-gradient(135deg, #174C3A 0%, #2D725A 100%);
+    color: #F8F6EF;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: clamp(0.95rem, 2.5vw, 1.1rem);
+    margin-bottom: 16px;
+}
+</style>
+""", unsafe_allow_html=True)
 
 
 # ======================================================
@@ -27,10 +61,10 @@ apply_custom_css()
 # ======================================================
 
 render_header(
-    title="Performa Model Machine Learning",
+    title="Perbandingan Model Machine Learning",
     subtitle=(
-        "Evaluasi dan komparasi hasil prediksi temperatur harian "
-        "berdasarkan data aktual Stasiun Meteorologi Kelas II Yogyakarta"
+        "Evaluasi dan komparasi performa model prediksi suhu harian "
+        "berdasarkan data cuaca historis wilayah Kulon Progo"
     ),
 )
 
@@ -310,7 +344,8 @@ with col_m1:
             "Perbandingan R² Score "
             "(Mendekati 1.0 Lebih Baik)"
         ),
-        template="plotly_dark"
+        template="plotly_white",
+        color_discrete_sequence=["#174C3A", "#A8C3AD", "#D6AD55"]
     )
 
     fig_r2.update_traces(
@@ -321,7 +356,15 @@ with col_m1:
     fig_r2.update_layout(
         showlegend=False,
         yaxis_title="R² Score",
-        xaxis_title="Model Algorithm"
+        xaxis_title="Model",
+        height=340,
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        margin=dict(l=10, r=10, t=50, b=10),
+        font=dict(color="#29352F"),
+        title_font=dict(size=13, color="#174C3A"),
+        yaxis=dict(gridcolor="#E8F0EA"),
+        xaxis=dict(tickfont=dict(size=11))
     )
 
     st.plotly_chart(
@@ -346,7 +389,8 @@ with col_m2:
             "Perbandingan RMSE "
             "(Mendekati 0.0 Lebih Baik)"
         ),
-        template="plotly_dark"
+        template="plotly_white",
+        color_discrete_sequence=["#174C3A", "#A8C3AD", "#D6AD55"]
     )
 
     fig_rmse.update_traces(
@@ -357,7 +401,15 @@ with col_m2:
     fig_rmse.update_layout(
         showlegend=False,
         yaxis_title="RMSE (°C)",
-        xaxis_title="Model Algorithm"
+        xaxis_title="Model",
+        height=340,
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        margin=dict(l=10, r=10, t=50, b=10),
+        font=dict(color="#29352F"),
+        title_font=dict(size=13, color="#174C3A"),
+        yaxis=dict(gridcolor="#E8F0EA"),
+        xaxis=dict(tickfont=dict(size=11))
     )
 
     st.plotly_chart(
@@ -521,7 +573,7 @@ try:
                 mode="lines",
                 name="Aktual",
                 line=dict(
-                    color="#FFFFFF",
+                    color="#174C3A",
                     width=2
                 )
             ))
@@ -533,19 +585,33 @@ try:
                 mode="lines",
                 name=f"Prediksi ({pilihan_model})",
                 line=dict(
-                    color="#3B82F6",
+                    color="#D6AD55",
                     dash="dash",
                     width=2
                 )
             ))
 
             fig_compare.update_layout(
-                title=f"Aktual vs Prediksi - {pilihan_model}",
+                title=f"Aktual vs Prediksi – {pilihan_model}",
                 xaxis_title="Tanggal",
                 yaxis_title="Temperatur (°C)",
-                template="plotly_dark",
-                height=420,
-                hovermode="x unified"
+                template="plotly_white",
+                height=380,
+                hovermode="x unified",
+                paper_bgcolor="rgba(0,0,0,0)",
+                plot_bgcolor="rgba(0,0,0,0)",
+                legend=dict(
+                    orientation="h",
+                    yanchor="top",
+                    y=-0.18,
+                    xanchor="center",
+                    x=0.5,
+                    font=dict(size=11)
+                ),
+                margin=dict(l=10, r=10, t=45, b=55),
+                font=dict(color="#29352F"),
+                title_font=dict(size=13, color="#174C3A"),
+                yaxis=dict(gridcolor="#E8F0EA"),
             )
 
             st.plotly_chart(

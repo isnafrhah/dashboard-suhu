@@ -2,13 +2,13 @@ import streamlit as st
 from style import apply_custom_css, draw_metric_card, render_header
 
 # Config Halaman
-st.set_page_config(page_title="Tentang – Sistem Pemantauan Cuaca", layout="wide")
+st.set_page_config(page_title="Tentang – CuacaTani Cabai", layout="wide")
 apply_custom_css()
 
 # Header Halaman
 render_header(
-    title="Tentang Sistem Pemantauan Cuaca & Prediksi Suhu",
-    subtitle="Dokumentasi, metodologi Machine Learning, dan informasi variabel parameter iklim.",
+    title="Tentang CuacaTani Cabai",
+    subtitle="Dokumentasi sistem, metodologi Machine Learning (Random Forest H+1), dan kamus variabel cuaca kawasan Temon, Kulon Progo.",
 )
 
 # ------------------------------------------------------
@@ -21,10 +21,19 @@ st.markdown(
 
 st.write(
     """
-Dashboard ini dirancang untuk melakukan **monitoring, analisis visual, dan pemodelan prediksi temperatur harian ($T_{AVG}$)** berdasarkan data historis parameter iklim kawasan Temon, Kulon Progo, Daerah Istimewa Yogyakarta.
+**CuacaTani Cabai** dirancang khusus untuk membantu **petani cabai** di kawasan Temon, Kabupaten Kulon Progo, D.I. Yogyakarta dalam memantau kondisi cuaca harian dan perkiraan suhu esok hari ($T_{AVG}$).
 
 Dengan memanfaatkan algoritma **Machine Learning (Random Forest Regression)**, sistem ini memprediksi suhu udara **H+1 (satu hari ke depan)** berdasarkan kondisi kelembapan, curah hujan, tekanan udara, penyinaran matahari, kecepatan angin, dan suhu rata-rata pada hari sebelumnya (H-1). Dengan skema ini, model benar-benar melakukan *forecasting* menggunakan informasi yang tersedia sebelum hari yang diprediksi terjadi, bukan sekadar estimasi berdasarkan kondisi hari yang sama.
 """
+)
+
+st.markdown(
+    """
+<div style="background:#FAF6EB; border:1px solid #E8D3A2; border-left:4px solid #D6AD55; padding:12px 16px; border-radius:8px; font-size:0.85rem; color:#8D6B28; margin: 12px 0;">
+    ⚠️ <b>Keterangan Status:</b> CuacaTani Cabai adalah sistem informasi pendukung operasional petani cabai dan <b>bukan aplikasi resmi BMKG</b>.
+</div>
+""",
+    unsafe_allow_html=True,
 )
 
 st.markdown("<br>", unsafe_allow_html=True)

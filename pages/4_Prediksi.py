@@ -11,60 +11,101 @@ from style import apply_custom_css, render_header
 # KONFIGURASI HALAMAN
 # ============================================================
 st.set_page_config(
-    page_title="Analisis Klimatologi",
+    page_title="Prediksi Suhu H+1 – CuacaTani Cabai",
     layout="wide"
 )
 apply_custom_css()
 
-# ============================================================
-# CSS CUSTOM
-# ============================================================
+# CSS custom halaman Prediksi — selaras tema CuacaTani Cabai
 st.markdown("""
 <style>
+/* ---- Label input warna hijau ---- */
 div[data-testid="stRadio"] label p,
 div[data-testid="stRadio"] label span,
 .stRadio label div,
 .stRadio label {
-    color: #0F172A !important;
+    color: #174C3A !important;
     font-weight: 600 !important;
     opacity: 1 !important;
 }
 div[data-testid="stNumberInput"] label,
 div[data-testid="stSelectbox"] label,
 div[data-testid="stDateInput"] label {
-    color: #0F172A !important;
+    color: #29352F !important;
     font-weight: 500 !important;
 }
+/* ---- Metric card: tema cream/hijau ---- */
 .metric-card {
-    background-color: #FFFFFF;
-    border: 1px solid #CBD5E1;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    background-color: #F0F6F2;
+    border: 1px solid #A8C3AD;
+    border-top: 3px solid #174C3A;
+    padding: 18px 16px;
+    border-radius: 10px;
+    box-shadow: 0 1px 4px rgba(23,76,58,0.08);
     text-align: left;
 }
 .metric-label {
-    color: #475569 !important;
-    font-size: 0.8rem;
-    font-weight: 600;
+    color: #2D725A !important;
+    font-size: 0.78rem;
+    font-weight: 700;
     text-transform: uppercase;
-    margin-bottom: 5px;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
 }
 .metric-value {
-    color: #0F172A !important;
-    font-size: 1.35rem;
-    font-weight: 700;
+    color: #174C3A !important;
+    font-size: clamp(1.1rem, 3vw, 1.4rem);
+    font-weight: 800;
 }
+/* ---- Tabel data cuaca ---- */
 div[data-testid="stTable"] table {
-    color: #0F172A !important;
-    background-color: #FFFFFF !important;
+    color: #29352F !important;
+    background-color: #F8F6EF !important;
 }
 div[data-testid="stTable"] th {
-    background-color: #F1F5F9 !important;
-    color: #0F172A !important;
+    background-color: #D5E4D8 !important;
+    color: #174C3A !important;
+    font-weight: 700 !important;
 }
 div[data-testid="stTable"] td {
-    color: #0F172A !important;
+    color: #29352F !important;
+}
+/* ---- Form: input stack di mobile ---- */
+@media (max-width: 768px) {
+    div[data-testid="stForm"] div[data-testid="stHorizontalBlock"] {
+        flex-direction: column !important;
+    }
+    div[data-testid="stForm"] div[data-testid="stHorizontalBlock"] > div[data-testid="column"] {
+        width: 100% !important;
+        min-width: 100% !important;
+        flex: 1 1 100% !important;
+    }
+    /* Input font-size 16px supaya iOS tidak auto-zoom */
+    div[data-testid="stNumberInput"] input,
+    div[data-testid="stDateInput"] input {
+        font-size: 16px !important;
+    }
+    /* Metric result cards stack 1 per baris di mobile */
+    .pred-result-row div[data-testid="stHorizontalBlock"] {
+        flex-direction: column !important;
+    }
+    .pred-result-row div[data-testid="stHorizontalBlock"] > div[data-testid="column"] {
+        width: 100% !important;
+        min-width: 100% !important;
+    }
+}
+/* ---- Submit button ---- */
+div[data-testid="stFormSubmitButton"] button {
+    background-color: #174C3A !important;
+    color: #F8F6EF !important;
+    font-weight: 700 !important;
+    border-radius: 8px !important;
+    padding: 10px 0 !important;
+    font-size: 1rem !important;
+    min-height: 48px !important;
+}
+div[data-testid="stFormSubmitButton"] button:hover {
+    background-color: #2D725A !important;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -73,8 +114,8 @@ div[data-testid="stTable"] td {
 # HEADER
 # ============================================================
 render_header(
-    "Analisis & Proyeksi Klimatologi",
-    "Prediksi suhu H+1 (hari berikutnya) berdasarkan kondisi cuaca satu hari sebelumnya."
+    "Prediksi Suhu H+1",
+    "Proyeksi suhu hari berikutnya berdasarkan kondisi cuaca hari ini — model Random Forest."
 )
 
 # ============================================================
@@ -261,26 +302,32 @@ def render_hasil(tanggal_x, tanggal_besok, tavg_x, suhu_besok, sumber_label, mae
     p1, p2, p3 = st.columns(3)
     with p1:
         st.markdown(f"""
-        <div class="metric-card">
-            <div class="metric-label">Prediksi Suhu ({tanggal_besok.strftime('%d %b')})</div>
-            <div class="metric-value">{suhu_besok:.2f} °C</div>
-            <div style="color:#64748B; font-size:0.8rem; margin-top:4px;">
+        <div class="metric-card" style="border-top: 4px solid #D6AD55;">
+            <div class="metric-label" style="color:#B8892E !important;">Prediksi Suhu ({tanggal_besok.strftime('%d %b')})</div>
+            <div class="metric-value" style="color:#174C3A !important; font-size:clamp(1.4rem, 3.5vw, 1.8rem);">{suhu_besok:.2f} °C</div>
+            <div style="color:#54665C; font-size:0.8rem; margin-top:4px;">
             MAE model: ±{mae:.2f} °C
             </div>
         </div>
         """, unsafe_allow_html=True)
     with p2:
         st.markdown(f"""
-        <div class="metric-card">
-            <div class="metric-label">Tren vs {tanggal_x.strftime('%d %b')}</div>
-            <div class="metric-value">{tren_teks}</div>
+        <div class="metric-card" style="border-top: 4px solid #174C3A;">
+            <div class="metric-label" style="color:#174C3A !important;">Tren vs {tanggal_x.strftime('%d %b')}</div>
+            <div class="metric-value" style="color:#174C3A !important;">{tren_teks}</div>
+            <div style="color:#54665C; font-size:0.8rem; margin-top:4px;">
+            Selisih: {selisih:+.2f} °C
+            </div>
         </div>
         """, unsafe_allow_html=True)
     with p3:
         st.markdown(f"""
-        <div class="metric-card">
-            <div class="metric-label">Indeks Kenyamanan</div>
-            <div class="metric-value">{kenyamanan}</div>
+        <div class="metric-card" style="border-top: 4px solid #A8C3AD;">
+            <div class="metric-label" style="color:#2D725A !important;">Kategori Suhu</div>
+            <div class="metric-value" style="color:#174C3A !important;">{kenyamanan}</div>
+            <div style="color:#54665C; font-size:0.8rem; margin-top:4px;">
+            Toleransi cabai optimal
+            </div>
         </div>
         """, unsafe_allow_html=True)
 
@@ -291,19 +338,26 @@ def render_hasil(tanggal_x, tanggal_besok, tavg_x, suhu_besok, sumber_label, mae
         x=[tanggal_x.strftime("%d %b"), tanggal_besok.strftime("%d %b")],
         y=[tavg_x, suhu_besok],
         mode="lines+markers+text",
-        line=dict(color="#ef4444", width=3),
-        marker=dict(size=10),
+        line=dict(color="#174C3A", width=3),
+        marker=dict(size=10, color="#D6AD55"),
         text=[f"{tavg_x:.2f}°C ({sumber_label})", f"{suhu_besok:.2f}°C (prediksi)"],
         textposition="top center",
         name="Proyeksi Suhu"
     ))
     fig.update_layout(
-        title="Grafik Proyeksi Suhu H+1",
+        title=dict(
+            text="Grafik Proyeksi Suhu H+1",
+            font=dict(color="#174C3A", size=13)
+        ),
         xaxis_title="",
         yaxis_title="Temperatur (°C)",
-        template="plotly_dark",
+        template="plotly_white",
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
         height=320,
-        margin=dict(t=40, b=20, l=20, r=20)
+        margin=dict(t=45, b=25, l=20, r=20),
+        font=dict(color="#29352F"),
+        yaxis=dict(gridcolor="#E8F0EA"),
     )
     st.plotly_chart(fig, use_container_width=True)
 

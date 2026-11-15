@@ -1,32 +1,40 @@
 import glob
 import os
+from pathlib import Path
+import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
-import pandas as pd
 import streamlit as st
 from style import apply_custom_css, draw_metric_card, render_header
 
 # Config Halaman
-st.set_page_config(page_title="Visualisasi Data - BMKG", page_icon="📈", layout="wide")
+st.set_page_config(
+    page_title="Visualisasi Data – CuacaTani Cabai",
+    page_icon="📈",
+    layout="wide"
+)
 apply_custom_css()
 
 # Header Halaman
 render_header(
-    title="Visualisasi & Analisis Parameter Iklim BMKG YIA",
-    subtitle="Eksplorasi grafik tren temporal, korelasi antar variabel, dan distribusi parameter iklim BMKG."
+    title="Visualisasi & Analisis Parameter Iklim Kawasan Temon",
+    subtitle="Eksplorasi grafik tren temporal harian, matriks korelasi antar-variabel, dan distribusi parameter iklim di Kawasan Temon, Kulon Progo.",
 )
+
+PROJECT_DIR = Path(__file__).resolve().parent.parent
+DATA_PATH = PROJECT_DIR / "data_bmkg_fix.csv"
+
 
 @st.cache_data
 def load_data():
-    # Langsung membaca file CSV hasil cleaning notebook
     try:
-        df = pd.read_csv("data_bmkg_fix.csv")
+        df = pd.read_csv(DATA_PATH)
+        df.columns = df.columns.str.strip()
         df["TANGGAL"] = pd.to_datetime(df["TANGGAL"], errors="coerce")
-        df = df.dropna(subset=["TANGGAL"]).sort_values(by="TANGGAL")
+        df = df.dropna(subset=["TANGGAL"]).sort_values(by="TANGGAL").reset_index(drop=True)
         return df
     except Exception as e:
         st.error(f"Gagal membaca file data_bmkg_fix.csv: {e}")
-        # Fallback Data jika file belum ketemu
         dates = pd.date_range(start="2024-07-14", end="2026-07-22", freq="D")
         return pd.DataFrame({
             "TANGGAL": dates,
@@ -36,7 +44,8 @@ def load_data():
             "FF_AVG": [2.5] * len(dates),
             "TAVG": [26.0] * len(dates)
         })
-    
+
+
 df = load_data()
 
 # ------------------------------------------------------
@@ -53,7 +62,7 @@ with col_f1:
 with col_f2:
     end_date = st.date_input("Sampai Tanggal:", max_date_val, min_value=min_date_val, max_value=max_date_val)
 
-# Filter Dataset berdasarkan pilihan
+# Filter Dataset berdasarkan pilihan tanggal
 filtered_df = df[(df["TANGGAL"].dt.date >= start_date) & (df["TANGGAL"].dt.date <= end_date)]
 
 st.markdown("<br>", unsafe_allow_html=True)
@@ -62,11 +71,10 @@ st.markdown("<br>", unsafe_allow_html=True)
 # 2. TREN TEMPORAL PARAMETER IKLIM
 # ------------------------------------------------------
 st.markdown(
-    '<div class="section-header">2. Grafik Tren Parameter Iklim</div>',
+    '<div class="section-header">2. Grafik Tren Temporal Parameter Iklim</div>',
     unsafe_allow_html=True,
 )
 
-# Abaikan kolom-kolom tanggal/waktu hasil feature engineering
 ignored_cols = [
     "TANGGAL",
     "YEAR",
@@ -78,7 +86,6 @@ ignored_cols = [
     "WEEKOFYEAR",
 ]
 
-# Pilihan variabel untuk diplot (hanya parameter iklim asli)
 numeric_cols = [
     c
     for c in filtered_df.columns
@@ -86,7 +93,7 @@ numeric_cols = [
 ]
 
 selected_vars = st.multiselect(
-    "Pilih Parameter Yang Ingin Ditampilkan Pada Grafik Tren:",
+    "Pilih Parameter Cuaca untuk Ditampilkan pada Grafik Tren:",
     options=numeric_cols,
     default=[c for c in ["TAVG", "RH_AVG", "RR"] if c in numeric_cols]
 )
@@ -96,17 +103,34 @@ if selected_vars:
         filtered_df,
         x="TANGGAL",
         y=selected_vars,
-        title="Tren Harian Parameter Iklim BMKG",
-        labels={"value": "Nilai Parameter", "TANGGAL": "Tanggal", "variable": "Parameter"},
-        template="plotly_white"
+        labels={"value": "Nilai Parameter", "TANGGAL": "Tanggal Pengamatan", "variable": "Parameter Cuaca"},
+        color_discrete_sequence=["#174C3A", "#D6AD55", "#2D725A", "#8D6B28", "#5B8266", "#3D5A4C"],
+        template="plotly_white",
     )
     fig_line.update_layout(
+        title=dict(
+            text="Tren Harian Parameter Iklim Kawasan Temon, Kulon Progo",
+            font=dict(family="Manrope", size=14, color="#174C3A")
+        ),
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        height=360,
+        margin=dict(l=10, r=10, t=45, b=20),
         hovermode="x unified",
-        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
+        legend=dict(
+            orientation="h",
+            yanchor="top",
+            y=-0.18,
+            xanchor="center",
+            x=0.5,
+            font=dict(size=11, color="#29352F")
+        ),
+        xaxis=dict(showgrid=True, gridcolor="#EAF3E8"),
+        yaxis=dict(showgrid=True, gridcolor="#EAF3E8"),
     )
     st.plotly_chart(fig_line, use_container_width=True)
 else:
-    st.warning("⚠️ Silakan pilih setidaknya satu parameter untuk ditampilkan.")
+    st.warning("⚠️ Silakan pilih setidaknya satu parameter cuaca untuk ditampilkan pada grafik.")
 
 st.markdown("<br>", unsafe_allow_html=True)
 
@@ -121,7 +145,7 @@ st.markdown(
 col_chart1, col_chart2 = st.columns(2)
 
 with col_chart1:
-    st.subheader("Matriks Korelasi (Heatmap)")
+    st.markdown("<h4 style='color:#174C3A; font-family:Manrope,sans-serif; margin-top:0;'>Matriks Korelasi (Heatmap)</h4>", unsafe_allow_html=True)
 
     corr_cols = [
         "TAVG",
@@ -132,7 +156,6 @@ with col_chart1:
         "PRESSURE"
     ]
 
-    # Hanya gunakan kolom yang memang tersedia
     available_corr_cols = [
         col for col in corr_cols if col in filtered_df.columns
     ]
@@ -144,8 +167,18 @@ with col_chart1:
             corr_matrix,
             text_auto=True,
             aspect="auto",
-            color_continuous_scale="Blues",
-            title="Korelasi Antar Parameter Iklim"
+            color_continuous_scale=["#FFFFFF", "#D5E4D8", "#A8C3AD", "#2D725A", "#174C3A"],
+            title="Korelasi Pearson Antar-Parameter Iklim"
+        )
+        fig_corr.update_layout(
+            title=dict(
+                text="Korelasi Pearson Antar-Parameter Iklim",
+                font=dict(family="Manrope", size=13, color="#174C3A")
+            ),
+            paper_bgcolor="rgba(0,0,0,0)",
+            plot_bgcolor="rgba(0,0,0,0)",
+            height=360,
+            margin=dict(l=10, r=10, t=40, b=10),
         )
 
         st.plotly_chart(fig_corr, use_container_width=True)
@@ -153,10 +186,10 @@ with col_chart1:
         st.info("Parameter numerik tidak cukup untuk menghitung korelasi.")
 
 with col_chart2:
-    st.subheader("Distribusi Parameter")
+    st.markdown("<h4 style='color:#174C3A; font-family:Manrope,sans-serif; margin-top:0;'>Distribusi Frekuensi Parameter</h4>", unsafe_allow_html=True)
 
     dist_var = st.selectbox(
-        "Pilih Parameter Untuk Histogram:",
+        "Pilih Parameter untuk Histogram:",
         numeric_cols
     )
 
@@ -166,14 +199,23 @@ with col_chart2:
             x=dist_var,
             nbins=30,
             marginal="box",
-            color_discrete_sequence=["#2563EB"],
-            title=f"Distribusi Frekuensi {dist_var}"
+            color_discrete_sequence=["#174C3A"],
         )
 
         fig_hist.update_layout(
+            title=dict(
+                text=f"Distribusi Frekuensi Parameter {dist_var}",
+                font=dict(family="Manrope", size=13, color="#174C3A")
+            ),
             template="plotly_white",
+            paper_bgcolor="rgba(0,0,0,0)",
+            plot_bgcolor="rgba(0,0,0,0)",
             xaxis_title=dist_var,
-            yaxis_title="Frekuensi"
+            yaxis_title="Frekuensi",
+            height=360,
+            margin=dict(l=10, r=10, t=40, b=10),
+            xaxis=dict(showgrid=True, gridcolor="#EAF3E8"),
+            yaxis=dict(showgrid=True, gridcolor="#EAF3E8"),
         )
 
         st.plotly_chart(
