@@ -115,7 +115,7 @@ if selected_vars:
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
         height=360,
-        margin=dict(l=10, r=10, t=45, b=20),
+        margin=dict(l=10, r=10, t=45, b=55),
         hovermode="x unified",
         legend=dict(
             orientation="h",

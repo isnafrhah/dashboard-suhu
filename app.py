@@ -202,6 +202,11 @@ header[data-testid="stHeader"] {
   color: var(--forest-green) !important;
   height: 2.8rem !important;
   z-index: 99 !important;
+  pointer-events: none !important;
+}
+
+header[data-testid="stHeader"] * {
+  pointer-events: auto !important;
 }
 
 [data-testid="stDecoration"] {
@@ -219,8 +224,17 @@ header[data-testid="stHeader"] {
   color: var(--forest-green) !important;
   top: 0.65rem !important;
   left: 0.75rem !important;
-  padding: 4px 6px !important;
+  min-width: 44px !important;
+  min-height: 44px !important;
+  padding: 8px 10px !important;
+  align-items: center !important;
+  justify-content: center !important;
   z-index: 99999 !important;
+}
+
+/* Sembunyikan footer Streamlit agar tidak menutupi tombol atau konten bawah di HP */
+footer {
+  display: none !important;
 }
 
 [data-testid="stSidebarCollapsedControl"] button,
@@ -230,10 +244,24 @@ header[data-testid="stHeader"] {
   stroke: var(--forest-green) !important;
 }
 
-/* Sembunyikan navigasi multipage bawaan agar tidak ada menu ganda */
+/* Sembunyikan SEMUA navigasi multipage bawaan Streamlit agar sidebar HANYA menampilkan 2 menu: Beranda & Tentang */
 [data-testid="stSidebarNav"],
-ul[data-testid="stSidebarNavItems"] {
+[data-testid="stSidebarNavItems"],
+[data-testid="stSidebarNavSeparator"],
+nav[data-testid="stSidebarNav"],
+ul[data-testid="stSidebarNavItems"],
+div[data-testid="stSidebarNav"],
+section[data-testid="stSidebar"] nav,
+section[data-testid="stSidebar"] a[data-testid="stSidebarNavLink"],
+section[data-testid="stSidebar"] ul:has(a[data-testid="stSidebarNavLink"]) {
   display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  max-height: 0 !important;
+  overflow: hidden !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  pointer-events: none !important;
 }
 
 /* Ruang konten dashboard yang rapi, proporsional, dan tidak terpotong */
@@ -321,35 +349,78 @@ div[data-testid="stSidebarUserContent"] {
 }
 
 .sidebar-station-sub {
-  font-size: 0.74rem;
+  font-size: 0.8rem;
   color: var(--gold) !important;
   font-weight: 600;
   letter-spacing: 0.02em;
 }
 
-section[data-testid="stSidebar"] div[data-testid="stRadio"] > div {
-  gap: 6px;
+section[data-testid="stSidebar"] div[data-testid="stRadio"] div[role="radiogroup"] {
+  gap: 8px;
 }
 
-section[data-testid="stSidebar"] div[data-testid="stRadio"] label {
+/* Judul MENU UTAMA: Murni teks tebal (bold), tanpa kotak, tanpa background, tanpa border/outline */
+section[data-testid="stSidebar"] div[data-testid="stRadio"] > label,
+section[data-testid="stSidebar"] div[data-testid="stRadio"] label[data-testid="stWidgetLabel"] {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  padding: 4px 2px 10px 2px !important;
+  margin: 0 !important;
+  min-height: auto !important;
+  height: auto !important;
+  display: block !important;
+  cursor: default !important;
+}
+
+section[data-testid="stSidebar"] div[data-testid="stRadio"] > label p,
+section[data-testid="stSidebar"] div[data-testid="stRadio"] label[data-testid="stWidgetLabel"] p,
+section[data-testid="stSidebar"] div[data-testid="stRadio"] > label span,
+section[data-testid="stSidebar"] div[data-testid="stRadio"] label[data-testid="stWidgetLabel"] span {
+  color: #E2ECE5 !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-size: 0.8rem !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.12em !important;
+  text-transform: uppercase !important;
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Tombol opsi navigasi Beranda & Tentang (Tetap mempertahankan desain kotak/pill yang sekarang) */
+section[data-testid="stSidebar"] div[data-testid="stRadio"] div[role="radiogroup"] > label,
+section[data-testid="stSidebar"] div[data-testid="stRadio"] div[role="radiogroup"] label {
   background: rgba(255,255,255,0.08) !important;
   border: 1px solid rgba(255,255,255,0.18) !important;
   border-radius: 10px !important;
-  padding: 10px 14px !important;
+  padding: 11px 16px !important;
   margin: 3px 0 !important;
-  font-weight: 600 !important;
+  font-weight: 700 !important;
+  font-size: 0.94rem !important;
   color: #FFFFFF !important;
   cursor: pointer;
+  min-height: 44px !important;
+  display: flex !important;
+  align-items: center !important;
   transition: all 0.2s ease;
 }
 
-section[data-testid="stSidebar"] div[data-testid="stRadio"] label:hover {
+section[data-testid="stSidebar"] div[data-testid="stRadio"] div[role="radiogroup"] > label:hover,
+section[data-testid="stSidebar"] div[data-testid="stRadio"] div[role="radiogroup"] label:hover {
   background: rgba(255,255,255,0.18) !important;
   border-color: rgba(255,255,255,0.32) !important;
   color: #FFFFFF !important;
 }
 
-section[data-testid="stSidebar"] div[data-testid="stRadio"] label:has(input:checked) {
+section[data-testid="stSidebar"] div[data-testid="stRadio"] div[role="radiogroup"] > label:has(input:checked),
+section[data-testid="stSidebar"] div[data-testid="stRadio"] div[role="radiogroup"] label:has(input:checked) {
   background: var(--gold) !important;
   border: 1px solid var(--gold-soft) !important;
   color: var(--forest-green) !important;
@@ -357,27 +428,28 @@ section[data-testid="stSidebar"] div[data-testid="stRadio"] label:has(input:chec
   box-shadow: 0 3px 12px rgba(0,0,0,0.25) !important;
 }
 
-section[data-testid="stSidebar"] div[data-testid="stRadio"] label:has(input:checked) * {
+section[data-testid="stSidebar"] div[data-testid="stRadio"] div[role="radiogroup"] > label:has(input:checked) *,
+section[data-testid="stSidebar"] div[data-testid="stRadio"] div[role="radiogroup"] label:has(input:checked) * {
   color: var(--forest-green) !important;
 }
 
 .sidebar-menu-label {
-  font-size: 0.68rem;
+  font-size: 0.78rem;
   font-weight: 800;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: rgba(255,255,255,0.5) !important;
-  margin: 8px 0 6px 2px;
+  color: rgba(255,255,255,0.65) !important;
+  margin: 10px 0 6px 2px;
   display: block;
 }
 
 .sidebar-footer-note {
-  font-size: 0.7rem;
-  color: rgba(255,255,255,0.4) !important;
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.7) !important;
   margin-top: 36px;
   text-align: center;
   line-height: 1.6;
-  border-top: 1px solid rgba(255,255,255,0.12);
+  border-top: 1px solid rgba(255,255,255,0.14);
   padding-top: 14px;
 }
 
@@ -546,208 +618,220 @@ section[data-testid="stSidebar"] div[data-testid="stRadio"] label:has(input:chec
     min-width: 100% !important;
   }
   .block-container {
-    padding-top: 3.2rem !important; /* ruang agar tombol sidebar floating tidak menimpa header */
-    padding-left: 1rem !important;
-    padding-right: 1rem !important;
-    padding-bottom: 2.5rem !important;
+    padding-top: 3.5rem !important; /* ruang agar tombol sidebar floating tidak menimpa header */
+    padding-left: 1.1rem !important;
+    padding-right: 1.1rem !important;
+    padding-bottom: calc(5.5rem + env(safe-area-inset-bottom, 24px)) !important; /* Mencegah terpotong atau tertutup navigasi browser/floating bar HP */
   }
   .header-card {
     min-height: auto;
-    padding: 18px 18px;
-    border-radius: 16px;
-    margin-bottom: 16px;
+    padding: 20px 20px;
+    border-radius: 18px;
+    margin-bottom: 20px;
   }
   .header-content {
     width: 100%;
   }
   .header-kicker {
-    font-size: 0.65rem;
-    letter-spacing: 0.1em;
-    line-height: 1.35;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    line-height: 1.4;
   }
   .header-title {
-    font-size: 1.25rem;
-    line-height: 1.3;
-    margin: 4px 0 6px 0;
+    font-size: clamp(1.25rem, 4vw, 1.48rem);
+    line-height: 1.32;
+    margin: 4px 0 8px 0;
   }
   .header-subtitle {
-    font-size: 0.82rem;
-    line-height: 1.48;
-    color: rgba(255,255,255,0.86);
+    font-size: 0.9rem;
+    line-height: 1.55;
+    color: rgba(255,255,255,0.9);
   }
   .header-pill {
-    font-size: 0.7rem;
-    padding: 4px 11px;
-    margin-top: 4px;
+    font-size: 0.78rem;
+    padding: 5px 13px;
+    margin-top: 6px;
   }
   .weather-hero-card {
-    padding: 18px 16px;
-    border-radius: 16px;
-    margin-bottom: 18px;
+    padding: 22px 18px;
+    border-radius: 18px;
+    margin-bottom: 22px;
   }
   .hero-top-row {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    gap: 8px;
-    margin-bottom: 12px;
+    gap: 10px;
+    margin-bottom: 14px;
   }
   .hero-badge-pill {
-    font-size: 0.72rem;
-    padding: 4px 10px;
+    font-size: 0.78rem;
+    padding: 5px 12px;
     font-weight: 800;
   }
   .hero-date-text {
-    font-size: 0.8rem;
+    font-size: 0.88rem;
+    font-weight: 600;
   }
   .hero-location-bar {
-    padding: 8px 12px;
-    margin-bottom: 14px;
-    border-radius: 10px;
+    padding: 10px 14px;
+    margin-bottom: 16px;
+    border-radius: 12px;
   }
   .hero-location-main {
-    font-size: 0.86rem;
+    font-size: 0.92rem;
+    font-weight: 800;
   }
   .hero-location-sub {
-    font-size: 0.74rem;
-    line-height: 1.45;
+    font-size: 0.84rem;
+    line-height: 1.52;
+    color: var(--text-mid);
   }
   .hero-temp-section {
     display: flex !important;
     flex-direction: row !important;
     align-items: center !important;
-    gap: 14px !important;
+    gap: 16px !important;
     flex-wrap: nowrap !important;
     width: 100% !important;
   }
   .hero-svg-box {
-    width: 78px !important;
-    height: 78px !important;
-    border-radius: 16px !important;
+    width: 82px !important;
+    height: 82px !important;
+    border-radius: 18px !important;
     flex-shrink: 0 !important;
   }
   .weather-illustration-img {
-    width: 62px !important;
-    height: 62px !important;
-    max-width: 62px !important;
-    max-height: 62px !important;
+    width: 66px !important;
+    height: 66px !important;
+    max-width: 66px !important;
+    max-height: 66px !important;
   }
   .hero-temp-big {
-    font-size: clamp(2.5rem, 8vw, 3.2rem) !important;
+    font-size: clamp(2.7rem, 8.5vw, 3.4rem) !important;
     line-height: 1 !important;
   }
   .hero-cond-title {
-    font-size: 1.15rem !important;
-    margin-top: 2px !important;
+    font-size: 1.22rem !important;
+    font-weight: 800 !important;
+    margin-top: 3px !important;
   }
   .hero-feel-text {
-    font-size: 0.78rem !important;
-    line-height: 1.4 !important;
-    margin-top: 2px !important;
+    font-size: 0.86rem !important;
+    line-height: 1.45 !important;
+    margin-top: 3px !important;
   }
   .hero-range-box {
-    padding: 12px 14px !important;
-    border-radius: 12px !important;
-    margin-top: 4px !important;
+    padding: 14px 16px !important;
+    border-radius: 14px !important;
+    margin-top: 8px !important;
   }
   .range-item {
-    padding: 4px 0 !important;
+    padding: 5px 0 !important;
   }
   .range-label {
-    font-size: 0.76rem !important;
+    font-size: 0.84rem !important;
+    font-weight: 600 !important;
   }
   .range-value {
-    font-size: 0.98rem !important;
+    font-size: 1.05rem !important;
+    font-weight: 800 !important;
   }
   /* Card Prediksi H+1: Ringkas & Menyorot Angka */
   .prediction-card {
-    padding: 18px 16px;
-    border-radius: 16px;
-    margin-bottom: 18px;
+    padding: 22px 18px;
+    border-radius: 18px;
+    margin-bottom: 22px;
   }
   .pred-header {
     flex-direction: column;
     align-items: flex-start;
-    gap: 8px;
-    margin-bottom: 12px;
-    padding-bottom: 12px;
+    gap: 10px;
+    margin-bottom: 14px;
+    padding-bottom: 14px;
   }
   .pred-title {
-    font-size: 1.05rem !important;
-    line-height: 1.35 !important;
+    font-size: 1.1rem !important;
+    line-height: 1.38 !important;
+    font-weight: 800 !important;
   }
   .pred-trend-pill {
     align-self: flex-start;
-    font-size: 0.78rem;
-    padding: 4px 10px;
+    font-size: 0.84rem;
+    padding: 6px 13px;
+    font-weight: 700;
   }
   .pred-temp-box {
     width: 100% !important;
     justify-content: center !important;
-    padding: 14px 20px !important;
+    padding: 14px 22px !important;
     border-radius: 14px !important;
   }
   .pred-temp-val {
-    font-size: clamp(2.8rem, 9vw, 3.4rem);
+    font-size: clamp(2.8rem, 9vw, 3.5rem);
     line-height: 1;
   }
   .pred-temp-unit {
-    font-size: 1.3rem;
+    font-size: 1.4rem;
   }
   .pred-desc-box {
     width: 100% !important;
     min-width: 0 !important;
     background: #FAF6EB;
     border: 1px solid #E8D3A2;
-    border-radius: 12px;
-    padding: 12px 14px;
+    border-radius: 14px;
+    padding: 14px 16px;
   }
   .pred-desc-box p {
-    font-size: 0.86rem !important;
-    line-height: 1.6 !important;
+    font-size: 0.92rem !important;
+    line-height: 1.68 !important;
+    color: #29352F !important;
   }
   /* Benchmark Card di HP */
   .benchmark-card {
-    padding: 16px 14px;
-    border-radius: 14px;
-    margin-bottom: 18px;
+    padding: 18px 16px;
+    border-radius: 16px;
+    margin-bottom: 22px;
   }
   .benchmark-grid {
     grid-template-columns: repeat(2, 1fr) !important;
-    gap: 8px !important;
+    gap: 10px !important;
   }
   .benchmark-item-fifth {
     grid-column: 1 / -1 !important;
   }
   section[data-testid="stSidebar"] {
-    width: 82vw !important;
+    width: 84vw !important;
     max-width: 320px !important;
   }
 }
 
 @media (max-width: 600px) {
-  /* 5 Parameter Cuaca rapi 2 kolom pada layar HP */
+  /* 5 Parameter Cuaca rapi 2 kolom pada layar HP dengan padding lega */
   .params-grid {
     grid-template-columns: repeat(2, 1fr) !important;
-    gap: 10px !important;
-    margin-top: 8px !important;
-    margin-bottom: 20px !important;
+    gap: 12px !important;
+    margin-top: 10px !important;
+    margin-bottom: 24px !important;
   }
   .param-card {
-    padding: 12px 14px !important;
+    padding: 14px 14px !important;
     border-radius: 14px !important;
   }
   .param-label {
-    font-size: 0.7rem !important;
-    letter-spacing: 0.05em !important;
+    font-size: 0.78rem !important;
+    letter-spacing: 0.06em !important;
+    font-weight: 700 !important;
   }
   .param-value {
-    font-size: 1.35rem !important;
-    margin: 6px 0 2px 0 !important;
+    font-size: 1.42rem !important;
+    margin: 6px 0 3px 0 !important;
+    font-weight: 800 !important;
   }
   .param-sub {
-    font-size: 0.72rem !important;
-    line-height: 1.35 !important;
+    font-size: 0.8rem !important;
+    line-height: 1.4 !important;
+    color: var(--text-muted) !important;
   }
   /* Kartu ke-5 (Tekanan Udara) membentang selebar 2 kolom dengan susunan horizontal rapi */
   .param-card-fifth {
@@ -756,18 +840,19 @@ section[data-testid="stSidebar"] div[data-testid="stRadio"] label:has(input:chec
     flex-direction: row !important;
     align-items: center !important;
     justify-content: space-between !important;
-    padding: 13px 16px !important;
+    padding: 14px 16px !important;
   }
   .param-card-fifth .param-value {
     margin: 0 !important;
-    font-size: 1.45rem !important;
+    font-size: 1.48rem !important;
+    font-weight: 800 !important;
   }
   .param-card-fifth .param-sub-desktop-hide {
     display: none !important;
   }
   .param-card-fifth .param-sub-mobile-show {
     display: block !important;
-    font-size: 0.72rem !important;
+    font-size: 0.8rem !important;
     color: var(--text-muted) !important;
     margin-top: 2px !important;
   }
@@ -778,24 +863,33 @@ section[data-testid="stSidebar"] div[data-testid="stRadio"] label:has(input:chec
   div.stDownloadButton > button,
   div[data-testid="stFormSubmitButton"] > button {
     width: 100% !important;
-    padding: 0.75rem 1rem !important;
-    font-size: 0.92rem !important;
-    min-height: 44px !important;
+    padding: 0.8rem 1.2rem !important;
+    font-size: 0.96rem !important;
+    font-weight: 800 !important;
+    min-height: 48px !important;
+    border-radius: 10px !important;
   }
   div[data-testid="stNumberInput"] input,
   div[data-testid="stDateInput"] input {
     font-size: 16px !important; /* Mencegah auto-zoom browser iOS di HP */
+    min-height: 44px !important;
   }
   /* Tabs pada layar kecil */
   div[data-testid="stTabs"] button[data-baseweb="tab"] {
-    font-size: 0.8rem !important;
-    padding: 6px 12px !important;
+    font-size: 0.86rem !important;
+    padding: 8px 14px !important;
+    min-height: 44px !important;
+  }
+  div[data-testid="stCaptionContainer"] p {
+    font-size: 0.86rem !important;
+    line-height: 1.55 !important;
   }
 }
 
 @media (max-width: 340px) {
   .params-grid {
     grid-template-columns: 1fr !important;
+    gap: 10px !important;
   }
   .param-card-fifth {
     flex-direction: column !important;
@@ -962,7 +1056,7 @@ section[data-testid="stSidebar"] div[data-testid="stRadio"] label:has(input:chec
   line-height: 1.3;
 }
 .hero-location-sub {
-  font-size: 0.75rem;
+  font-size: 0.84rem;
   color: var(--text-muted);
   font-weight: 500;
   margin-top: 2px;
@@ -970,13 +1064,14 @@ section[data-testid="stSidebar"] div[data-testid="stRadio"] label:has(input:chec
 }
 @media (max-width: 600px) {
   .hero-location-bar {
-    padding: 8px 11px;
+    padding: 10px 14px;
   }
   .hero-location-main {
-    font-size: 0.82rem;
+    font-size: 0.94rem;
   }
   .hero-location-sub {
-    font-size: 0.7rem;
+    font-size: 0.86rem;
+    line-height: 1.55;
   }
 }
 
@@ -986,7 +1081,7 @@ section[data-testid="stSidebar"] div[data-testid="stRadio"] label:has(input:chec
 }
 
 .section-kicker {
-  font-size: 0.72rem;
+  font-size: 0.78rem;
   font-weight: 800;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -1896,11 +1991,10 @@ with st.sidebar:
     </div>
     """)
 
-    render_html("<span class='sidebar-menu-label'>Menu Utama</span>")
     menu = st.radio(
         "MENU UTAMA",
         ["Beranda", "Tentang"],
-        label_visibility="collapsed",
+        label_visibility="visible",
     )
 
     render_html("""
@@ -2027,7 +2121,7 @@ if menu == "Beranda":
                     </div>
                 </div>
                 <div class="hero-range-box">
-                    <div style="font-size:0.73rem; font-weight:700; color:#174C3A; letter-spacing:0.09em; text-transform:uppercase; margin-bottom:8px;">
+                    <div style="font-size:0.8rem; font-weight:800; color:#174C3A; letter-spacing:0.09em; text-transform:uppercase; margin-bottom:8px;">
                         VARIASI SUHU HARI INI
                     </div>
                     <div class="range-item">
@@ -2172,25 +2266,25 @@ if menu == "Beranda":
                     </div>
                 </div>
                 <div class="benchmark-grid">
-                    <div style="background:#F0F6F2; padding:10px 14px; border-radius:12px; border:1px solid #A8C3AD;">
-                        <span style="font-size:0.72rem; color:#54665C; font-weight:700;">SUHU ACUAN</span>
-                        <div style="font-size:1.15rem; font-weight:800; color:#174C3A;">{last_bmkg['TAVG']:.1f} °C</div>
+                    <div style="background:#F0F6F2; padding:12px 14px; border-radius:12px; border:1px solid #A8C3AD;">
+                        <span style="font-size:0.8rem; color:#2D725A; font-weight:800; letter-spacing:0.04em; text-transform:uppercase;">SUHU ACUAN</span>
+                        <div style="font-size:1.25rem; font-weight:800; color:#174C3A; margin-top:2px;">{last_bmkg['TAVG']:.1f} °C</div>
                     </div>
-                    <div style="background:#F0F6F2; padding:10px 14px; border-radius:12px; border:1px solid #A8C3AD;">
-                        <span style="font-size:0.72rem; color:#54665C; font-weight:700;">KELEMBAPAN</span>
-                        <div style="font-size:1.15rem; font-weight:800; color:#174C3A;">{last_bmkg['RH_AVG']:.0f} %</div>
+                    <div style="background:#F0F6F2; padding:12px 14px; border-radius:12px; border:1px solid #A8C3AD;">
+                        <span style="font-size:0.8rem; color:#2D725A; font-weight:800; letter-spacing:0.04em; text-transform:uppercase;">KELEMBAPAN</span>
+                        <div style="font-size:1.25rem; font-weight:800; color:#174C3A; margin-top:2px;">{last_bmkg['RH_AVG']:.0f} %</div>
                     </div>
-                    <div style="background:#F0F6F2; padding:10px 14px; border-radius:12px; border:1px solid #A8C3AD;">
-                        <span style="font-size:0.72rem; color:#54665C; font-weight:700;">CURAH HUJAN</span>
-                        <div style="font-size:1.15rem; font-weight:800; color:#174C3A;">{last_bmkg['RR']:.1f} mm</div>
+                    <div style="background:#F0F6F2; padding:12px 14px; border-radius:12px; border:1px solid #A8C3AD;">
+                        <span style="font-size:0.8rem; color:#2D725A; font-weight:800; letter-spacing:0.04em; text-transform:uppercase;">CURAH HUJAN</span>
+                        <div style="font-size:1.25rem; font-weight:800; color:#174C3A; margin-top:2px;">{last_bmkg['RR']:.1f} mm</div>
                     </div>
-                    <div style="background:#F0F6F2; padding:10px 14px; border-radius:12px; border:1px solid #A8C3AD;">
-                        <span style="font-size:0.72rem; color:#54665C; font-weight:700;">PENYINARAN</span>
-                        <div style="font-size:1.15rem; font-weight:800; color:#174C3A;">{last_bmkg['SS']:.1f} Jam</div>
+                    <div style="background:#F0F6F2; padding:12px 14px; border-radius:12px; border:1px solid #A8C3AD;">
+                        <span style="font-size:0.8rem; color:#2D725A; font-weight:800; letter-spacing:0.04em; text-transform:uppercase;">PENYINARAN</span>
+                        <div style="font-size:1.25rem; font-weight:800; color:#174C3A; margin-top:2px;">{last_bmkg['SS']:.1f} Jam</div>
                     </div>
-                    <div class="benchmark-item-fifth" style="background:#F0F6F2; padding:10px 14px; border-radius:12px; border:1px solid #A8C3AD;">
-                        <span style="font-size:0.72rem; color:#54665C; font-weight:700;">TEKANAN UDARA</span>
-                        <div style="font-size:1.15rem; font-weight:800; color:#174C3A;">{last_bmkg['PRESSURE']:.1f} hPa</div>
+                    <div class="benchmark-item-fifth" style="background:#F0F6F2; padding:12px 14px; border-radius:12px; border:1px solid #A8C3AD;">
+                        <span style="font-size:0.8rem; color:#2D725A; font-weight:800; letter-spacing:0.04em; text-transform:uppercase;">TEKANAN UDARA</span>
+                        <div style="font-size:1.25rem; font-weight:800; color:#174C3A; margin-top:2px;">{last_bmkg['PRESSURE']:.1f} hPa</div>
                     </div>
                 </div>
             </div>
@@ -2724,7 +2818,7 @@ else:
                 <li><b>Memantau cuaca aktual hari ini:</b> Memperoleh informasi langsung tentang suhu, kelembapan, curah hujan, angin, dan tekanan udara.</li>
                 <li><b>Mengetahui perkiraan suhu esok hari (H+1):</b> Mendapatkan gambaran awal apakah suhu esok hari cenderung lebih panas, sejuk, atau stabil guna mengantisipasi kondisi lahan.</li>
             </ul>
-            <div style="background:#FAF6EB; border:1px solid #E8D3A2; padding:10px 14px; border-radius:8px; font-size:0.83rem; color:#8D6B28;">
+            <div style="background:#FAF6EB; border:1px solid #E8D3A2; padding:12px 16px; border-radius:10px; font-size:0.88rem; color:#8D6B28; line-height:1.55;">
                 ⚠️ <b>Keterangan Status Aplikasi:</b> CuacaTani Cabai adalah sistem informasi pendukung dan <b>bukan aplikasi resmi BMKG</b>.
             </div>
         </div>
@@ -2734,35 +2828,35 @@ else:
             <p style="font-size:0.92rem; line-height:1.7; color:#29352F;">
                 Aplikasi ini memanfaatkan <b>dua sumber data yang berbeda</b> dengan fungsi masing-masing agar sistem berjalan optimal:
             </p>
-            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap:14px; margin-top:12px;">
-                <div style="background:#F0F6F2; border:1px solid #A8C3AD; border-radius:12px; padding:14px 16px;">
-                    <div style="font-size:0.78rem; font-weight:800; color:#174C3A; letter-spacing:0.06em; text-transform:uppercase;">
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap:14px; margin-top:12px;">
+                <div style="background:#F0F6F2; border:1px solid #A8C3AD; border-radius:12px; padding:16px 16px;">
+                    <div style="font-size:0.82rem; font-weight:800; color:#174C3A; letter-spacing:0.06em; text-transform:uppercase;">
                         SUMBER 1: DATA HISTORIS BMKG
                     </div>
-                    <div style="font-size:0.9rem; font-weight:700; color:#174C3A; margin-top:4px;">
+                    <div style="font-size:0.94rem; font-weight:700; color:#174C3A; margin-top:4px;">
                         Dataset Pembelajaran Model (Offline)
                     </div>
-                    <div style="font-size:0.84rem; color:#29352F; line-height:1.6; margin-top:6px;">
+                    <div style="font-size:0.88rem; color:#29352F; line-height:1.65; margin-top:8px;">
                         • <b>Asal Data:</b> Data rekaman pengamatan stasiun cuaca resmi BMKG di sekitar Temon.<br>
                         • <b>Jumlah:</b> 583 baris data harian (15 Juli 2024 – 12 Juli 2026).<br>
                         • <b>Fungsi:</b> Khusus digunakan untuk <b>pengolahan data (preprocessing), analisis korelasi, serta melatih dan menguji model Machine Learning</b>.
                     </div>
                 </div>
-                <div style="background:#FAF6EB; border:1px solid #E8D3A2; border-radius:12px; padding:14px 16px;">
-                    <div style="font-size:0.78rem; font-weight:800; color:#8D6B28; letter-spacing:0.06em; text-transform:uppercase;">
+                <div style="background:#FAF6EB; border:1px solid #E8D3A2; border-radius:12px; padding:16px 16px;">
+                    <div style="font-size:0.82rem; font-weight:800; color:#8D6B28; letter-spacing:0.06em; text-transform:uppercase;">
                         SUMBER 2: OPEN-METEO API
                     </div>
-                    <div style="font-size:0.9rem; font-weight:700; color:#8D6B28; margin-top:4px;">
+                    <div style="font-size:0.94rem; font-weight:700; color:#8D6B28; margin-top:4px;">
                         Data Cuaca Berjalan Terkini (Online)
                     </div>
-                    <div style="font-size:0.84rem; color:#29352F; line-height:1.6; margin-top:6px;">
+                    <div style="font-size:0.88rem; color:#29352F; line-height:1.65; margin-top:8px;">
                         • <b>Asal Data:</b> Layanan Open-Meteo Weather API pada titik koordinat Temon (-7.90746, 110.05448).<br>
                         • <b>Sifat:</b> Data cuaca aktual yang diperbarui otomatis saat aplikasi dibuka.<br>
                         • <b>Fungsi:</b> Menyediakan <b>tampilan cuaca hari ini</b> serta menjadi <b>input otomatis</b> untuk menghitung perkiraan suhu esok hari (H+1).
                     </div>
                 </div>
             </div>
-            <div style="background:#F0F6F2; border-left:4px solid #174C3A; padding:10px 14px; border-radius:6px; margin-top:14px; font-size:0.84rem; color:#174C3A; line-height:1.5;">
+            <div style="background:#F0F6F2; border-left:4px solid #174C3A; padding:12px 16px; border-radius:8px; margin-top:14px; font-size:0.88rem; color:#174C3A; line-height:1.6;">
                 <b>Penegasan:</b> Data historis BMKG berfungsi sebagai <i>otak/fondasi pelatihan model</i>, sedangkan Open-Meteo API berfungsi sebagai <i>penyedia data cuaca berjalan</i>. Pemisahan ini memastikan sistem tetap dapat melakukan prediksi suhu esok hari secara mandiri.
             </div>
         </div>
@@ -2772,7 +2866,7 @@ else:
             <p style="font-size:0.92rem; line-height:1.7; color:#29352F;">
                 Prediksi suhu esok hari disusun melalui tahapan pengolahan data terstruktur:
             </p>
-            <ol style="font-size:0.88rem; line-height:1.8; color:#29352F; padding-left:20px; margin:0 0 10px 0;">
+            <ol style="font-size:0.92rem; line-height:1.8; color:#29352F; padding-left:20px; margin:0 0 10px 0;">
                 <li><b>Pembersihan Data (Data Cleaning):</b> Memeriksa kelengkapan data historis, menangani nilai anomali, dan merapikan format tanggal.</li>
                 <li><b>Rekayasa Fitur Lag-1 (Time Lag):</b> Membentuk fitur penundaan waktu di mana data cuaca hari ini (Hari H) digunakan sebagai masukan untuk memprediksi suhu rata-rata hari berikutnya (Hari H+1).</li>
                 <li><b>Pembagian Data:</b> Data dibagi menjadi data latih (training) dan data uji (testing) untuk mengukur performa prediksi secara objektif.</li>
@@ -2782,7 +2876,7 @@ else:
 
         <div class="param-card" style="background:#FFFFFF; border:1px solid #D6E3D9; border-left:5px solid #A8C3AD;">
             <h3 style="color:#174C3A; margin-top:0;">4. Kamus Variabel Cuaca</h3>
-            <ul style="font-size:0.9rem; line-height:1.8; color:#29352F; padding-left:20px; margin:0;">
+            <ul style="font-size:0.92rem; line-height:1.8; color:#29352F; padding-left:20px; margin:0;">
                 <li><b>TAVG (°C):</b> Suhu rata-rata harian udara permukaan (variabel yang diproyeksikan untuk H+1).</li>
                 <li><b>RH_AVG (%):</b> Kelembapan udara relatif rata-rata harian (kandungan uap air).</li>
                 <li><b>RR (mm):</b> Jumlah akumulasi curah hujan harian.</li>

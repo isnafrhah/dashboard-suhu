@@ -30,7 +30,65 @@ def apply_custom_css():
             letter-spacing: -0.02em;
         }
 
+        /* HEADER TRANSPARAN & TOMBOL SIDEBAR MOBILE */
+        header[data-testid="stHeader"] {
+            background: transparent !important;
+            height: 2.8rem !important;
+            z-index: 99 !important;
+            pointer-events: none !important;
+        }
+
+        header[data-testid="stHeader"] * {
+            pointer-events: auto !important;
+        }
+
+        [data-testid="stSidebarCollapsedControl"] {
+            display: flex !important;
+            visibility: visible !important;
+            background: #FFFFFF !important;
+            border: 1.5px solid #A8C3AD !important;
+            border-radius: 10px !important;
+            box-shadow: 0 3px 12px rgba(23, 76, 58, 0.16) !important;
+            color: #174C3A !important;
+            top: 0.65rem !important;
+            left: 0.75rem !important;
+            min-width: 44px !important;
+            min-height: 44px !important;
+            padding: 8px 10px !important;
+            align-items: center !important;
+            justify-content: center !important;
+            z-index: 99999 !important;
+            pointer-events: auto !important;
+        }
+
+        [data-testid="stSidebarCollapsedControl"] button,
+        [data-testid="stSidebarCollapsedControl"] svg {
+            color: #174C3A !important;
+            fill: #174C3A !important;
+            stroke: #174C3A !important;
+        }
+
         /* 2. SIDEBAR STYLING */
+        /* Sembunyikan SEMUA navigasi multipage bawaan Streamlit agar sidebar HANYA menampilkan 2 menu: Beranda & Tentang */
+        [data-testid="stSidebarNav"],
+        [data-testid="stSidebarNavItems"],
+        [data-testid="stSidebarNavSeparator"],
+        nav[data-testid="stSidebarNav"],
+        ul[data-testid="stSidebarNavItems"],
+        div[data-testid="stSidebarNav"],
+        section[data-testid="stSidebar"] nav,
+        section[data-testid="stSidebar"] a[data-testid="stSidebarNavLink"],
+        section[data-testid="stSidebar"] ul:has(a[data-testid="stSidebarNavLink"]) {
+            display: none !important;
+            visibility: hidden !important;
+            height: 0 !important;
+            max-height: 0 !important;
+            overflow: hidden !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            pointer-events: none !important;
+        }
+
         section[data-testid="stSidebar"] {
             background-color: #174C3A !important;
             border-right: none !important;
@@ -130,24 +188,25 @@ def apply_custom_css():
         }
         .metric-title {
             color: #54665C;
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.06em;
-            margin-bottom: 0.3rem;
+            margin-bottom: 0.35rem;
         }
         .metric-value {
             color: #174C3A;
             font-family: 'Manrope', sans-serif;
             font-size: 1.6rem;
             font-weight: 800;
-            margin-bottom: 0.2rem;
+            margin-bottom: 0.25rem;
             line-height: 1.2;
         }
         .metric-subtitle {
             color: #2D725A;
-            font-size: 0.8rem;
+            font-size: 0.86rem;
             font-weight: 600;
+            line-height: 1.4;
         }
 
         /* 5. SECTION HEADER STYLING */
@@ -211,19 +270,23 @@ def apply_custom_css():
         }
 
         /* 9. RESPONSIVITAS MULTI-SCREEN */
+        footer {
+            display: none !important;
+        }
+
         @media (max-width: 992px) {
             div[data-testid="stHorizontalBlock"] {
                 flex-wrap: wrap !important;
-                gap: 12px !important;
+                gap: 14px !important;
             }
         }
 
         @media (max-width: 768px) {
             .block-container {
-                padding-top: 3.2rem !important;
-                padding-left: 1rem !important;
-                padding-right: 1rem !important;
-                padding-bottom: 2rem !important;
+                padding-top: 3.5rem !important;
+                padding-left: 1.1rem !important;
+                padding-right: 1.1rem !important;
+                padding-bottom: calc(5.5rem + env(safe-area-inset-bottom, 24px)) !important;
             }
             div[data-testid="stHorizontalBlock"] > div[data-testid="column"] {
                 flex: 1 1 100% !important;
@@ -231,24 +294,38 @@ def apply_custom_css():
                 width: 100% !important;
             }
             .metric-card {
-                padding: 12px 14px;
-                border-radius: 12px;
-                margin-bottom: 8px;
+                padding: 15px 16px;
+                border-radius: 14px;
+                margin-bottom: 10px;
+            }
+            .metric-title {
+                font-size: 0.8rem !important;
             }
             .metric-value {
-                font-size: 1.35rem;
+                font-size: 1.45rem !important;
+            }
+            .metric-subtitle {
+                font-size: 0.86rem !important;
+                line-height: 1.4 !important;
             }
             div.stButton > button, 
             div.stDownloadButton > button,
             div[data-testid="stFormSubmitButton"] > button {
-                padding: 0.75rem 1rem !important;
-                font-size: 0.92rem !important;
-                min-height: 44px !important;
+                padding: 0.8rem 1.2rem !important;
+                font-size: 0.96rem !important;
+                font-weight: 800 !important;
+                min-height: 48px !important;
+                border-radius: 10px !important;
             }
             div[data-testid="stTextInput"] input,
             div[data-testid="stNumberInput"] input,
             div[data-testid="stDateInput"] input {
                 font-size: 16px !important; /* Mencegah auto zoom iOS */
+                min-height: 44px !important;
+            }
+            div[data-testid="stCaptionContainer"] p {
+                font-size: 0.86rem !important;
+                line-height: 1.55 !important;
             }
         }
         </style>
@@ -262,20 +339,20 @@ def render_header(title, subtitle):
         f"""
         <div style="
             background: linear-gradient(105deg, #1F5C48 0%, #174C3A 55%, #10382B 100%);
-            padding: 1.6rem 2rem;
-            border-radius: 16px;
+            padding: 1.8rem 2rem;
+            border-radius: 18px;
             color: white;
             margin-bottom: 1.8rem;
             box-shadow: 0 6px 20px rgba(23, 76, 58, 0.2);
             border: 1px solid rgba(255,255,255,0.12);
         ">
-            <div style="font-size: 0.68rem; font-weight: 800; letter-spacing: 0.12em; color: #D6AD55; text-transform: uppercase; margin-bottom: 6px;">
+            <div style="font-size: 0.76rem; font-weight: 800; letter-spacing: 0.12em; color: #D6AD55; text-transform: uppercase; margin-bottom: 6px;">
                 CUACATANI CABAI · SISTEM INFORMASI CUACA UNTUK PETANI CABAI
             </div>
             <h1 style="color: #FFFFFF; font-family: 'Manrope', sans-serif; font-size: clamp(1.25rem, 2.5vw, 1.7rem); font-weight: 800; margin: 0 0 0.4rem 0; letter-spacing: -0.02em; line-height: 1.25;">
                 {title}
             </h1>
-            <p style="color: rgba(255,255,255,0.85); font-size: 0.88rem; margin: 0; font-weight: 400; line-height: 1.5;">
+            <p style="color: rgba(255,255,255,0.9); font-size: 0.92rem; margin: 0; font-weight: 400; line-height: 1.55;">
                 {subtitle}
             </p>
         </div>

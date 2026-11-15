@@ -46,7 +46,7 @@ div[data-testid="stDateInput"] label {
 }
 .metric-label {
     color: #2D725A !important;
-    font-size: 0.78rem;
+    font-size: 0.82rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -54,7 +54,7 @@ div[data-testid="stDateInput"] label {
 }
 .metric-value {
     color: #174C3A !important;
-    font-size: clamp(1.1rem, 3vw, 1.4rem);
+    font-size: clamp(1.3rem, 3.8vw, 1.7rem);
     font-weight: 800;
 }
 /* ---- Tabel data cuaca ---- */
